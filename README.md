@@ -57,7 +57,7 @@ Não há ORM: todas as consultas são montadas como texto e concatenadas com os 
 2. **Clonar e instalar dependências**
 
    ```bash
-   git clone https://github.com/<seu-usuario>/<repositorio>.git
+   git clone https://github.com/LucasCardosoBr/Sistema-de-Controle-de-Estoque/tree/main
    cd <repositorio>
    pip install -r requirements.txt
    ```
