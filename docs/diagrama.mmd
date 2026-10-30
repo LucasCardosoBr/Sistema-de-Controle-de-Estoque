@@ -1,0 +1,23 @@
+---
+title: Sistema de Controle de Estoque - Diagrama Relacional
+---
+erDiagram
+    FORNECEDORES ||--o{ PRODUTOS : "fornece (1:N)"
+
+    FORNECEDORES {
+        NUMBER_10 id_fornecedor PK "obrigatorio"
+        VARCHAR2_100 nome "obrigatorio"
+        VARCHAR2_18 cnpj UK "obrigatorio, unico"
+        VARCHAR2_20 telefone "opcional"
+        VARCHAR2_100 email "opcional"
+    }
+
+    PRODUTOS {
+        NUMBER_10 id_produto PK "obrigatorio"
+        VARCHAR2_100 nome "obrigatorio"
+        NUMBER_10_2 preco_unitario "obrigatorio, >= 0"
+        NUMBER_10 quantidade_estoque "obrigatorio, >= 0"
+        NUMBER_10 estoque_minimo "obrigatorio, >= 0"
+        NUMBER_10 quantidade_comprada "obrigatorio, default 0"
+        NUMBER_10 id_fornecedor FK "obrigatorio"
+    }
