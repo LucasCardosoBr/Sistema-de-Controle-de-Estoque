@@ -46,39 +46,45 @@ Diagrama em [`docs/diagrama.pdf`](docs/diagrama.pdf) (fonte Mermaid em [`docs/di
 
 Não há ORM: todas as consultas são montadas como texto e concatenadas com os atributos (textos passam por escape de aspas simples).
 
-## Como executar (Linux)
+## Como executar (Linux, VM LabDatabase)
 
-1. **Pré-requisitos:** Python 3.9+ e acesso ao Oracle da VM da disciplina.
+O projeto roda na VM Ubuntu da disciplina, onde o Oracle (imagem `gvenzl/oracle-xe:21-slim-faststart`) fica no container `database_services-oracle-1`.
+
+1. **Garanta que o Oracle está no ar** (ele pode demorar para ficar *healthy* na primeira vez):
 
    ```bash
-   python3 --version
+   docker ps
+   docker start database_services-oracle-1   # se o container estiver parado (nome mostrado na coluna NAMES do docker ps)
    ```
 
-2. **Clonar e instalar dependências**
+2. **Descubra o host.** Se o projeto roda dentro da VM, use `localhost`. Se roda fora (com NAT/port forwarding no VirtualBox), use `localhost` com a porta mapeada. Caso contrário, use o IP da VM:
 
    ```bash
-   git clone https://github.com/LucasCardosoBr/Sistema-de-Controle-de-Estoque/tree/main
-   cd <repositorio>
+   ip addr    # procure o IP em enp0s3 ou eth0
+   ```
+
+3. **Clonar e instalar dependências** (Python 3.9+):
+
+   ```bash
+   git clone https://github.com/LucasCardosoBr/Sistema-de-Controle-de-Estoque.git
+   cd Sistema-de-Controle-de-Estoque
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
-   O driver `oracledb` usa o modo *thin*, sem precisar do Oracle Client.
+   O driver `oracledb` usa o modo *thin*, sem precisar do Oracle Client. Se faltar o `venv`: `sudo apt install python3-venv python3-pip`.
 
-3. **Configurar a conexão:** copie o modelo e preencha usuário, senha e DSN (`host:porta/serviço`).
+4. **Configurar a conexão:** copie o modelo e preencha. No container da VM, a senha dos usuários administrativos é `oracle` (usuário `system`); se o AVA indicar outro usuário, use-o. O DSN tem o formato `host:1521/serviço` (o serviço costuma ser `XEPDB1`; confirme com o professor).
 
    ```bash
    cp .env.example .env
    nano .env
    ```
 
-4. **Criar as tabelas:** execute `sql/01_criar_tabelas.sql` no SQL Developer ou no sqlplus. Opcionalmente, rode `sql/02_dados_exemplo.sql` para carregar dados de teste.
+5. **Criar as tabelas:** no DBeaver, conecte no Oracle (host, porta 1521, serviço, usuário e senha), abra `sql/01_criar_tabelas.sql` e execute como **script** (Alt+X). Depois, se quiser dados de teste, execute `sql/02_dados_exemplo.sql`.
 
-   ```bash
-   sqlplus usuario/senha@//localhost:1521/XEPDB1 @sql/01_criar_tabelas.sql
-   sqlplus usuario/senha@//localhost:1521/XEPDB1 @sql/02_dados_exemplo.sql
-   ```
-
-5. **Executar**
+6. **Executar**
 
    ```bash
    python3 src/main.py
@@ -87,8 +93,9 @@ Não há ORM: todas as consultas são montadas como texto e concatenadas com os 
 ## Solução de problemas
 
 - **"Credenciais do Oracle não configuradas":** falta criar o arquivo `.env`.
-- **`ORA-12541` / `DPY-6005`:** host, porta ou serviço do `ORACLE_DSN` estão errados, ou o listener está parado.
+- **`ORA-12541` / `DPY-6005`:** host, porta ou serviço do `ORACLE_DSN` estão errados, ou o container está parado (`docker start database_services-oracle-1`).
 - **`ORA-00942` (tabela não existe):** rode o script `sql/01_criar_tabelas.sql` com o mesmo usuário do `.env`.
+- **`externally-managed-environment` no pip:** use o ambiente virtual (`python3 -m venv .venv`) como no passo 3.
 
 ## Vídeo demonstrativo
 
