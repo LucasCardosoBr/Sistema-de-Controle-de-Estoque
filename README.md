@@ -96,7 +96,3 @@ O projeto roda na VM Ubuntu da disciplina, onde o Oracle (imagem `gvenzl/oracle-
 - **`ORA-12541` / `DPY-6005`:** host, porta ou serviço do `ORACLE_DSN` estão errados, ou o container está parado (`docker start database_services-oracle-1`).
 - **`ORA-00942` (tabela não existe):** rode o script `sql/01_criar_tabelas.sql` com o mesmo usuário do `.env`.
 - **`externally-managed-environment` no pip:** use o ambiente virtual (`python3 -m venv .venv`) como no passo 3.
-
-## Vídeo demonstrativo
-
-<!-- Cole aqui o link do vídeo no YouTube -->
